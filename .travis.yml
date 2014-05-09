@@ -16,9 +16,13 @@ before_install:
  - sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
  # more recent boost
  - sudo add-apt-repository -y ppa:mapnik/boost
- - sudo apt-get update -y
  # upgrade compilers
+ - wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key|sudo apt-key add -
+ - sudo bash -c "echo 'deb http://llvm.org/apt/precise/ llvm-toolchain-precise main' > /etc/apt/sources.list.d/llvm-nightly.list"
+ - sudo bash -c "echo 'deb-src http://llvm.org/apt/precise/ llvm-toolchain-precise main' >> /etc/apt/sources.list.d/llvm-nightly.list"
+ - sudo apt-get update -y
  - sudo apt-get install -y gcc-4.8 g++-4.8
+ - sudo apt-get install clang-3.5 clang-3.5-doc libclang-common-3.5-dev libclang-3.5-dev libclang1-3.5 libclang1-3.5-dbg libllvm-3.5-ocaml-dev libllvm3.5 libllvm3.5-dbg lldb-3.5 llvm-3.5 llvm-3.5-dev llvm-3.5-doc llvm-3.5-examples llvm-3.5-runtime clang-modernize-3.5 clang-format-3.5 python-clang-3.5 lldb-3.5-dev
  - sudo apt-get install -y make libboost-dev libboost-filesystem-dev libboost-program-options-dev libboost-python-dev libboost-regex-dev libboost-system-dev libboost-thread-dev python-nose libicu-dev libpng-dev libjpeg-dev libtiff-dev libwebp-dev libz-dev libfreetype6-dev libxml2-dev libproj-dev libcairo-dev python-cairo-dev libsqlite3-dev
  - wget http://mapnik.s3.amazonaws.com/deps/harfbuzz-0.9.24.tar.bz2
  - tar xf harfbuzz-0.9.24.tar.bz2
@@ -30,8 +34,8 @@ before_install:
  - psql -c "CREATE EXTENSION postgis" template_postgis
 
 install:
- - if [ "${CXX}" = 'g++' ]; then export CXX="g++-4.8" && export CC="gcc-4.8"; fi;
- - ./configure CXX=${CXX} CC=${CC} DEMO=False BINDINGS=${BINDINGS} BENCHMARK=${BENCHMARK} CPP_TESTS=${CPP_TESTS} CAIRO=True FAST=True || cat config.log
+# - if [ "${CXX}" = 'g++' ]; then export CXX="g++-4.8" && export CC="gcc-4.8"; fi;
+ - ./configure CXX=clang++-3.5 CC=clang-3.5  CUSTOM_CXXFLAGS="-flto" CUSTOM_LDFLAGS="-flto" DEMO=False BINDINGS=${BINDINGS} BENCHMARK=${BENCHMARK} CPP_TESTS=${CPP_TESTS} CAIRO=True FAST=True || cat config.log
  - JOBS=1 make
 
 env:
