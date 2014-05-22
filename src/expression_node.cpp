@@ -28,23 +28,23 @@ namespace mapnik
 
 #if defined(BOOST_REGEX_HAS_ICU)
 
-regex_match_node::regex_match_node (expr_node && a, mapnik::value_unicode_string const& ustr)
-    : expr(std::move(a)),
+regex_match_node::regex_match_node (expr_node const& a, mapnik::value_unicode_string const& ustr)
+    : expr(a),
       pattern(boost::make_u32regex(ustr)) {}
 
-regex_replace_node::regex_replace_node (expr_node && a, mapnik::value_unicode_string const& ustr, mapnik::value_unicode_string const& f)
-    : expr(std::move(a)),
+regex_replace_node::regex_replace_node (expr_node const& a, mapnik::value_unicode_string const& ustr, mapnik::value_unicode_string const& f)
+    : expr(a),
       pattern(boost::make_u32regex(ustr)),
       format(f) {}
 
 #else
 
-regex_match_node::regex_match_node (expr_node && a, std::string const& str)
-    : expr(std::move(a)),
+regex_match_node::regex_match_node (expr_node const& a, std::string const& str)
+    : expr(a),
       pattern(str) {}
 
-regex_replace_node::regex_replace_node (expr_node && a, std::string const& str, std::string const& f)
-    : expr(std::move(a)),
+regex_replace_node::regex_replace_node (expr_node const& a, std::string const& str, std::string const& f)
+    : expr(a),
       pattern(str),
       format(f) {}
 #endif

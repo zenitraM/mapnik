@@ -44,22 +44,22 @@ namespace mapnik
 {
 
 template <typename T0,typename T1>
-expr_node regex_match_impl::operator() (T0 && node, T1 const& pattern) const
+expr_node regex_match_impl::operator() (T0 & node, T1 const& pattern) const
 {
 #if defined(BOOST_REGEX_HAS_ICU)
-    return regex_match_node(std::move(node),tr_.transcode(pattern.c_str()));
+    return regex_match_node(node,tr_.transcode(pattern.c_str()));
 #else
-    return regex_match_node(std::move(node),pattern);
+    return regex_match_node(node,pattern);
 #endif
 }
 
 template <typename T0,typename T1,typename T2>
-expr_node regex_replace_impl::operator() (T0 && node, T1 const& pattern, T2 const& format) const
+expr_node regex_replace_impl::operator() (T0 & node, T1 const& pattern, T2 const& format) const
 {
 #if defined(BOOST_REGEX_HAS_ICU)
-    return regex_replace_node(std::move(node),tr_.transcode(pattern.c_str()),tr_.transcode(format.c_str()));
+    return regex_replace_node(node,tr_.transcode(pattern.c_str()),tr_.transcode(format.c_str()));
 #else
-    return regex_replace_node(std::move(node),pattern,format);
+    return regex_replace_node(node,pattern,format);
 #endif
 }
 
