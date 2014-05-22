@@ -26,8 +26,10 @@
 // mapnik
 #include <mapnik/config.hpp>
 #include <mapnik/value_types.hpp>
+// variant
+#include "/Users/artem/Projects/variant/variant.hpp"
 // boost
-#include <boost/variant/variant.hpp>
+//#include <boost/variant/variant.hpp>
 #include <boost/optional.hpp>
 
 // stl
@@ -40,7 +42,7 @@ namespace mapnik
 // fwd declare
 class boolean;
 
-typedef boost::variant<value_null,value_integer,value_double,std::string> value_holder;
+typedef ::util::variant<value_null,value_integer,value_double,std::string> value_holder;
 typedef std::pair<std::string, value_holder> parameter;
 typedef std::map<std::string, value_holder> param_map;
 

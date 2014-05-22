@@ -89,7 +89,7 @@ struct parameters_pickle_suite : boost::python::pickle_suite
             // TODO - this is never hit - we need proper python string -> std::string to get invoked here
             if (ex0.check())
             {
-                p[key] = ex0();
+                p[key] = std::string(ex0());
             }
             else if (ex1.check())
             {
@@ -103,7 +103,7 @@ struct parameters_pickle_suite : boost::python::pickle_suite
             {
                 std::string buffer;
                 mapnik::to_utf8(ex3(),buffer);
-                p[key] = buffer;
+                p[key] = std::move(buffer);
             }
             else
             {
@@ -164,7 +164,7 @@ mapnik::value_holder get_param(mapnik::parameter const& p, int index)
 {
     if (index == 0)
     {
-        return p.first;
+        return mapnik::value_holder(p.first);
     }
     else if (index == 1)
     {

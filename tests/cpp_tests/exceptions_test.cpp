@@ -64,8 +64,8 @@ int main(int argc, char** argv)
         try {
             mapnik::datasource_cache::instance().register_datasource(csv_plugin);
             mapnik::parameters p;
-            p["type"]="csv";
-            p["inline"]="x,y\n0,0";
+            p["type"]=std::string("csv");
+            p["inline"]=std::string("x,y\n0,0");
             mapnik::datasource_ptr ds = mapnik::datasource_cache::instance().create(p);
             mapnik::layer l("layer");
             l.set_datasource(ds);
@@ -90,8 +90,8 @@ int main(int argc, char** argv)
         try {
             mapnik::datasource_cache::instance().register_datasource(shape_plugin);
             mapnik::parameters p2;
-            p2["type"]="shape";
-            p2["file"]="foo";
+            p2["type"]=std::string("shape");
+            p2["file"]=std::string("foo");
             mapnik::datasource_cache::instance().create(p2);
             BOOST_TEST(false);
         } catch (...) {

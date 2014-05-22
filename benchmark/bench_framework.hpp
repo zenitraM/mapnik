@@ -1,5 +1,5 @@
 #ifndef __MAPNIK_BENCH_FRAMEWORK_HPP__
-#define __MAPNIK_BENCH_FRAMEWORK_HPP__ 
+#define __MAPNIK_BENCH_FRAMEWORK_HPP__
 
 // mapnik
 #include <mapnik/params.hpp>
@@ -54,7 +54,7 @@ void handle_args(int argc, char** argv, mapnik::parameters & params)
                 std::string key = std::string(argv[i-1]);
                 if (!key.empty() && (key.find("--") == 0)) {
                     key = key.substr(key.find_first_not_of("-"));
-                    params[key] = opt;
+                    params[key] = std::move(opt);
                 }
             }
         }

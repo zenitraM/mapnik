@@ -27,8 +27,11 @@
 #include <mapnik/config.hpp>
 #include <mapnik/value.hpp>
 
+// variant
+#include "/Users/artem/Projects/variant/variant.hpp"
+
 // boost
-#include <boost/variant/apply_visitor.hpp>
+//#include <boost/variant/apply_visitor.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/iterator/iterator_traits.hpp>
 #include <boost/iterator/iterator_facade.hpp>
@@ -71,7 +74,7 @@ struct value_not_null
 {
     bool operator() (feature_kv_iterator::value_type const& kv) const
     {
-        return !boost::apply_visitor(is_null, std::get<1>(kv).base());
+        return !::util::apply_visitor(is_null, std::get<1>(kv).base());
     }
 };
 

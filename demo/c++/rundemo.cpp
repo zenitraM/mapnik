@@ -225,9 +225,9 @@ int main ( int argc , char** argv)
         // Provincial  polygons
         {
             parameters p;
-            p["type"]="shape";
-            p["file"]="demo/data/boundaries";
-            p["encoding"]="latin1";
+            p["type"]=std::string("shape");
+            p["file"]=std::string("demo/data/boundaries");
+            p["encoding"]=std::string("latin1");
 
             layer lyr("Provinces");
             lyr.set_datasource(datasource_cache::instance().create(p));
@@ -239,8 +239,8 @@ int main ( int argc , char** argv)
         // Drainage
         {
             parameters p;
-            p["type"]="shape";
-            p["file"]="demo/data/qcdrainage";
+            p["type"]=std::string("shape");
+            p["file"]=std::string("demo/data/qcdrainage");
             layer lyr("Quebec Hydrography");
             lyr.set_datasource(datasource_cache::instance().create(p));
             lyr.set_srs(srs_lcc);
@@ -250,8 +250,8 @@ int main ( int argc , char** argv)
 
         {
             parameters p;
-            p["type"]="shape";
-            p["file"]="demo/data/ontdrainage";
+            p["type"]=std::string("shape");
+            p["file"]=std::string("demo/data/ontdrainage");
             layer lyr("Ontario Hydrography");
             lyr.set_datasource(datasource_cache::instance().create(p));
             lyr.set_srs(srs_lcc);
@@ -262,8 +262,8 @@ int main ( int argc , char** argv)
         // Provincial boundaries
         {
             parameters p;
-            p["type"]="shape";
-            p["file"]="demo/data/boundaries_l";
+            p["type"]=std::string("shape");
+            p["file"]=std::string("demo/data/boundaries_l");
             layer lyr("Provincial borders");
             lyr.set_srs(srs_lcc);
             lyr.set_datasource(datasource_cache::instance().create(p));
@@ -274,8 +274,8 @@ int main ( int argc , char** argv)
         // Roads
         {
             parameters p;
-            p["type"]="shape";
-            p["file"]="demo/data/roads";
+            p["type"]=std::string("shape");
+            p["file"]=std::string("demo/data/roads");
             layer lyr("Roads");
             lyr.set_srs(srs_lcc);
             lyr.set_datasource(datasource_cache::instance().create(p));
@@ -290,9 +290,9 @@ int main ( int argc , char** argv)
         // popplaces
         {
             parameters p;
-            p["type"]="shape";
-            p["file"]="demo/data/popplaces";
-            p["encoding"] = "latin1";
+            p["type"]=std::string("shape");
+            p["file"]=std::string("demo/data/popplaces");
+            p["encoding"] = std::string("latin1");
             layer lyr("Populated Places");
             lyr.set_srs(srs_lcc);
             lyr.set_datasource(datasource_cache::instance().create(p));

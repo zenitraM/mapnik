@@ -75,7 +75,7 @@ std::shared_ptr<mapnik::datasource> create_datasource(dict const& d)
         extract<double> ex2(obj);
         if (ex0.check())
         {
-            params[key] = ex0();
+            params[key] = std::string(ex0());
         }
         else if (ex1.check())
         {

@@ -520,7 +520,7 @@ void serialize_parameters( ptree & map_node, mapnik::parameters const& params)
                                                         boost::property_tree::ptree()))->second;
             param_node.put("<xmlattr>.name", p.first );
             param_node.put_value( p.second );
-            boost::apply_visitor(serialize_type(param_node),p.second);
+            ::util::apply_visitor(serialize_type(param_node),p.second);
         }
     }
 }

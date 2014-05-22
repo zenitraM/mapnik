@@ -50,12 +50,15 @@
 #include <mapnik/json/feature_collection_parser.hpp>
 #include <mapnik/json/generic_json.hpp>
 
+// variant
+#include "/Users/artem/Projects/variant/variant.hpp"
+
 using mapnik::datasource;
 using mapnik::parameters;
 
 DATASOURCE_PLUGIN(geojson_datasource)
 
-struct attr_value_converter : public boost::static_visitor<mapnik::eAttributeType>
+struct attr_value_converter : public ::util::static_visitor<mapnik::eAttributeType>
 {
     mapnik::eAttributeType operator() (mapnik::value_integer /*val*/) const
     {
@@ -153,7 +156,7 @@ geojson_datasource::geojson_datasource(parameters const& params)
             for ( ;f_itr!=f_end; ++f_itr)
             {
                 desc_.add_descriptor(mapnik::attribute_descriptor(std::get<0>(*f_itr),
-                    boost::apply_visitor(attr_value_converter(),std::get<1>(*f_itr).base())));
+                                                                  ::util::apply_visitor(attr_value_converter(),std::get<1>(*f_itr).base())));
             }
         }
         else

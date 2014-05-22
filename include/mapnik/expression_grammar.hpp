@@ -75,7 +75,7 @@ struct regex_match_impl
         : tr_(tr) {}
 
     template <typename T0,typename T1>
-    expr_node operator() (T0 & node, T1 const& pattern) const;
+    expr_node operator() (T0 && node, T1 const& pattern) const;
 
     mapnik::transcoder const& tr_;
 };
@@ -93,7 +93,7 @@ struct regex_replace_impl
         : tr_(tr) {}
 
     template <typename T0,typename T1,typename T2>
-    expr_node operator() (T0 & node, T1 const& pattern, T2 const& format) const;
+    expr_node operator() (T0 && node, T1 const& pattern, T2 const& format) const;
 
     mapnik::transcoder const& tr_;
 };

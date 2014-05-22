@@ -59,8 +59,8 @@ template <> struct make_op<tags::logical_or> { typedef std::logical_or<value_typ
 template <typename Tag>
 struct unary_node
 {
-    unary_node (expr_node const& a)
-        : expr(a) {}
+    unary_node (expr_node && a)
+        : expr(std::move(a)) {}
 
     static const char* type()
     {
@@ -73,9 +73,9 @@ struct unary_node
 template <typename Tag>
 struct binary_node
 {
-    binary_node(expr_node const& a, expr_node const& b)
-        : left(a),
-          right(b) {}
+    binary_node(expr_node && a, expr_node && b)
+        : left(std::move(a)),
+          right(std::move(b)) {}
 
     static const char* type()
     {
@@ -88,7 +88,7 @@ struct binary_node
 
 struct regex_match_node
 {
-    regex_match_node (expr_node const& a, mapnik::value_unicode_string const& ustr);
+    regex_match_node (expr_node && a, mapnik::value_unicode_string const& ustr);
     expr_node expr;
     boost::u32regex pattern;
 };
@@ -96,7 +96,7 @@ struct regex_match_node
 
 struct regex_replace_node
 {
-    regex_replace_node (expr_node const& a, mapnik::value_unicode_string const& ustr, mapnik::value_unicode_string const& f);
+    regex_replace_node (expr_node && a, mapnik::value_unicode_string const& ustr, mapnik::value_unicode_string const& f);
     expr_node expr;
     boost::u32regex pattern;
     mapnik::value_unicode_string format;
@@ -106,7 +106,7 @@ struct regex_replace_node
 
 struct regex_match_node
 {
-    regex_match_node (expr_node const& a, std::string const& str);
+    regex_match_node (expr_node && a, std::string const& str);
     expr_node expr;
     boost::regex pattern;
 };
@@ -114,7 +114,7 @@ struct regex_match_node
 
 struct regex_replace_node
 {
-    regex_replace_node (expr_node const& a, std::string const& str, std::string const& f);
+    regex_replace_node (expr_node && a, std::string const& str, std::string const& f);
     expr_node expr;
     boost::regex pattern;
     std::string format;
@@ -124,8 +124,8 @@ struct regex_replace_node
 struct function_call
 {
     template<typename Fun>
-    explicit function_call (expr_node const a, Fun f)
-        : expr(a),
+    explicit function_call (expr_node && a, Fun f)
+        : expr(std::move(a)),
           call_(f) {}
 
     expr_node expr;
@@ -134,79 +134,80 @@ struct function_call
 
 // ops
 
-inline expr_node& operator- (expr_node& expr)
+inline expr_node operator- (expr_node && expr)
 {
-    return expr = unary_node<tags::negate>(expr);
+    return ::util::recursive_wrapper<unary_node<tags::negate>>(std::move(expr));
 }
 
-inline expr_node & operator += ( expr_node &left, expr_node const& right)
+inline expr_node operator += ( expr_node && left, expr_node && right)
 {
-    return left =  binary_node<tags::plus>(left,right);
+    return ::util::recursive_wrapper<binary_node<tags::plus>>(binary_node<tags::plus>(std::move(left),std::move(right)));
 }
 
-inline expr_node & operator -= ( expr_node &left, expr_node const& right)
+inline expr_node operator -= ( expr_node && left, expr_node && right)
 {
-    return left =  binary_node<tags::minus>(left,right);
+    return ::util::recursive_wrapper<binary_node<tags::minus>>(binary_node<tags::minus>(std::move(left),std::move(right)));
 }
 
-inline expr_node & operator *= ( expr_node &left , expr_node const& right)
+inline expr_node  operator *= ( expr_node && left , expr_node && right)
 {
-    return left =  binary_node<tags::mult>(left,right);
+    return ::util::recursive_wrapper<binary_node<tags::mult>>(binary_node<tags::mult>(std::move(left),std::move(right)));
 }
 
-inline expr_node & operator /= ( expr_node &left , expr_node const& right)
+inline expr_node operator /= ( expr_node && left , expr_node && right)
 {
-    return left =  binary_node<tags::div>(left,right);
+    return ::util::recursive_wrapper<binary_node<tags::div>>(binary_node<tags::div>(std::move(left),std::move(right)));
 }
 
-inline expr_node & operator %= ( expr_node &left , expr_node const& right)
+inline expr_node operator %= ( expr_node && left , expr_node && right)
 {
-    return left = binary_node<tags::mod>(left,right);
+    return ::util::recursive_wrapper<binary_node<tags::mod>>(binary_node<tags::mod>(std::move(left),std::move(right)));
 }
 
-inline expr_node & operator < ( expr_node &left, expr_node const& right)
+inline expr_node operator < ( expr_node && left, expr_node && right)
 {
-    return left = binary_node<tags::less>(left,right);
+    return ::util::recursive_wrapper<binary_node<tags::less>>(binary_node<tags::less>(std::move(left),std::move(right)));
 }
 
-inline expr_node & operator <= ( expr_node &left, expr_node const& right)
+inline expr_node operator <= ( expr_node && left, expr_node && right)
 {
-    return left = binary_node<tags::less_equal>(left,right);
+    return ::util::recursive_wrapper<binary_node<tags::less_equal>>(binary_node<tags::less_equal>(std::move(left),std::move(right)));
 }
 
-inline expr_node & operator > ( expr_node &left, expr_node const& right)
+inline expr_node operator > ( expr_node && left, expr_node && right)
 {
-    return left = binary_node<tags::greater>(left,right);
+    return ::util::recursive_wrapper<binary_node<tags::greater>>(binary_node<tags::greater>(std::move(left),std::move(right)));
 }
 
-inline expr_node & operator >= ( expr_node &left, expr_node const& right)
+inline expr_node operator >= ( expr_node && left, expr_node && right)
 {
-    return left = binary_node<tags::greater_equal>(left,right);
+    return ::util::recursive_wrapper<binary_node<tags::greater_equal>>(binary_node<tags::greater_equal>(std::move(left),std::move(right)));
 }
 
-inline expr_node & operator == ( expr_node &left, expr_node const& right)
+inline expr_node operator == ( expr_node && left, expr_node && right)
 {
-    return left = binary_node<tags::equal_to>(left,right);
+    return ::util::recursive_wrapper<binary_node<tags::equal_to>>(binary_node<tags::equal_to>(std::move(left),std::move(right)));
 }
 
-inline expr_node & operator != ( expr_node &left, expr_node const& right)
+inline expr_node operator != ( expr_node && left, expr_node && right)
 {
-    return left = binary_node<tags::not_equal_to>(left,right);
+    return ::util::recursive_wrapper<binary_node<tags::not_equal_to>>(binary_node<tags::not_equal_to>(std::move(left),std::move(right)));
 }
 
-inline expr_node & operator ! (expr_node & expr)
+inline expr_node operator ! (expr_node && expr)
 {
-    return expr = unary_node<tags::logical_not>(expr);
+    return ::util::recursive_wrapper<unary_node<tags::logical_not>>(std::move(expr));
 }
 
-inline expr_node & operator && ( expr_node &left, expr_node const& right)
+inline expr_node operator && ( expr_node && left, expr_node && right)
 {
-    return left = binary_node<tags::logical_and>(left,right);
+    return ::util::recursive_wrapper<binary_node<tags::logical_and>>(binary_node<tags::logical_and>(std::move(left),std::move(right)));
+
 }
 
-inline expr_node & operator || ( expr_node &left, expr_node const& right)
+inline expr_node operator || ( expr_node && left, expr_node && right)
 {
-    return left = binary_node<tags::logical_or>(left,right);
+    return ::util::recursive_wrapper<binary_node<tags::logical_or>>(binary_node<tags::logical_or>(std::move(left),std::move(right)));
 }
 
 }
