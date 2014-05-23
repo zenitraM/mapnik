@@ -1007,14 +1007,6 @@ struct is_null : public ::util::static_visitor<bool>
         boost::ignore_unused_variable_warning(val);
         return false;
     }
-
-    template <BOOST_VARIANT_ENUM_PARAMS(typename T)>
-    bool operator() (boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)> const& val)
-        const
-    {
-        return false;
-        //return ::util::apply_visitor(*this, val);
-    }
 };
 
 } // namespace impl
