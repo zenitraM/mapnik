@@ -71,7 +71,7 @@ namespace boost { namespace python {
     {
         static PyObject* convert(mapnik::value const& v)
         {
-            return boost::apply_visitor(value_converter(),v.base());
+            return ::util::apply_visitor(value_converter(),v.base());
         }
 
     };
@@ -80,7 +80,7 @@ namespace boost { namespace python {
     {
         static PyObject* convert(mapnik::value_holder const& v)
         {
-            return boost::apply_visitor(value_converter(),v);
+            return ::util::apply_visitor(value_converter(),v);
         }
     };
 
