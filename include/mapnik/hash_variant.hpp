@@ -19,30 +19,40 @@
 # pragma once
 #endif
 
-#include <boost/variant/variant_fwd.hpp>
-#include <boost/variant/static_visitor.hpp>
-#include <boost/variant/apply_visitor.hpp>
-#include <boost/functional/hash_fwd.hpp>
+// stl
+#include <functional>
+// variant
+#include "/Users/artem/Projects/variant/variant.hpp"
 
-namespace boost {
 
-    namespace detail { namespace variant {
-        struct variant_hasher: public boost::static_visitor<std::size_t> {
-            template <class T>
-            std::size_t operator()(T const& val) const {
-                using namespace boost;
-                hash<T> hasher;
-                return hasher(val);
-            }
-        };
-    }}
+namespace boost { namespace detail { namespace variant {
 
-    template < BOOST_VARIANT_ENUM_PARAMS(typename T) >
-    std::size_t hash_value(variant< BOOST_VARIANT_ENUM_PARAMS(T) > const& val) {
-        std::size_t seed = boost::apply_visitor(detail::variant::variant_hasher(), val);
-        hash_combine(seed, val.which());
-        return seed;
+template <class T>
+inline void hash_combine(std::size_t& seed, const T& v)
+{
+    std::hash<T> hasher;
+    seed ^= hasher(v) + 0x9e3779b9 + (seed<<6) + (seed>>2);
+}
+
+struct variant_hasher: public ::util::static_visitor<std::size_t>
+{
+    template <class T>
+    std::size_t operator()(T const& val) const
+    {
+        std::hash<T> hasher;
+        return hasher(val);
     }
+};
+}}
+
+template <typename T>
+std::size_t hash_value(T const& val)
+{
+    std::size_t seed = ::util::apply_visitor(detail::variant::variant_hasher(), val);
+    hash_combine(seed, val.which());
+    return seed;
+}
+
 }
 
 #endif
