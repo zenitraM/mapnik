@@ -98,6 +98,26 @@ inline void read_int32_ndr(const char* data, boost::int32_t & val)
 #endif
 }
 
+// read float to double NDR (little endian)
+inline void read_float_double_ndr(const char* data, double & val)
+{
+  float w;
+  double d;
+#ifndef MAPNIK_BIG_ENDIAN
+    std::memcpy(&w,&data[0],4);
+    d = (double) w;
+    std::memcpy(&val,&d,8);
+#else
+    boost::int32_t bits = ((boost::int32_t)data[0] & 0xff) |
+        ((boost::int32_t)data[1] & 0xff) << 8   |
+        ((boost::int32_t)data[2] & 0xff) << 16  |
+        ((boost::int32_t)data[3] & 0xff) << 24  ;
+    std::memcpy(&w,&bits,4);
+    d = (float) w;
+    std::memcpy(&val,&d,4);
+#endif
+}
+
 // read double NDR (little endian)
 inline void read_double_ndr(const char* data, double & val)
 {
@@ -136,11 +156,34 @@ inline void read_int32_xdr(const char* data, boost::int32_t & val)
 #endif
 }
 
+// read float to double XDR (big endian)
+inline void read_float_double_xdr(const char* data, double & val)
+{
+  float w;
+  double d;
+#ifndef MAPNIK_BIG_ENDIAN
+    boost::int32_t bits = 
+      (
+       (boost::int32_t)data[7] & 0xff) |
+        ((boost::int32_t)data[6] & 0xff) << 8   |
+        ((boost::int32_t)data[5] & 0xff) << 16  |
+        ((boost::int32_t)data[4] & 0xff) << 24;
+    std::memcpy(&w,&bits,4);
+    d = (double) w;
+    std::memcpy(&val,&d, 8);
+#else
+    std::memcpy(&w,&data[0],4);
+    d = (double) w;
+    std::memcpy(&val,&d,8);
+#endif
+}
 // read double XDR (big endian)
 inline void read_double_xdr(const char* data, double & val)
 {
 #ifndef MAPNIK_BIG_ENDIAN
-    boost::int64_t bits = ((boost::int64_t)data[7] & 0xff) |
+    boost::int64_t bits = 
+      (
+       (boost::int64_t)data[7] & 0xff) |
         ((boost::int64_t)data[6] & 0xff) << 8   |
         ((boost::int64_t)data[5] & 0xff) << 16  |
         ((boost::int64_t)data[4] & 0xff) << 24  |
