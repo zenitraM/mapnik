@@ -197,26 +197,7 @@ postgis_datasource::postgis_datasource(parameters const& params)
                 // a subselect as long as we know the geometry_field to query
                 if (! geometryColumn_.empty() && srid_ <= 0)
                 {
-                    s.str("");
-
-                    s << "SELECT ST_SRID(\"" << geometryColumn_ << "\") AS srid FROM "
-                      << populate_tokens(table_) << " WHERE \"" << geometryColumn_ << "\" IS NOT NULL LIMIT 1;";
-
-                    shared_ptr<ResultSet> rs = conn->executeQuery(s.str());
-                    if (rs->next())
-                    {
-                        const char* srid_c = rs->getValue("srid");
-                        if (srid_c != NULL)
-                        {
-                            int result = 0;
-                            const char * end = srid_c + std::strlen(srid_c);
-                            if (mapnik::util::string2int(srid_c, end, result))
-                            {
-                                srid_ = result;
-                            }
-                        }
-                    }
-                    rs->close();
+                    srid_ = 4326;
                 }
             }
 
@@ -635,7 +616,7 @@ featureset_ptr postgis_datasource::features(const query& q) const
             const double px_gw = 1.0 / boost::get<0>(q.resolution());
             const double px_gh = 1.0 / boost::get<1>(q.resolution());
 
-            s << "SELECT ST_AsBinary(";
+            s << "SELECT st_cdb_asbinary(";
 
             if (simplify_geometries_) {
                 s << "ST_Simplify(";
@@ -651,7 +632,7 @@ featureset_ptr postgis_datasource::features(const query& q) const
                 s << ", " << tolerance << ")";
             }
 
-            s << ") AS geom";
+            s << ", '') AS geom";
 
             mapnik::context_ptr ctx = boost::make_shared<mapnik::context_type>();
             std::set<std::string> const& props = q.property_names();
