@@ -118,7 +118,8 @@ public:
 
     void read(boost::ptr_vector<geometry_type> & paths)
     {
-        int type = read_integer();
+        int type = *(wkb_ + pos_);
+        pos_ += 1;
 
         switch (type)
         {
@@ -171,6 +172,21 @@ public:
 
 private:
 
+    int read_byte()
+    {
+        boost::int32_t n;
+        if (needSwap_)
+        {
+            read_int32_xdr(wkb_ + pos_, n);
+        }
+        else
+        {
+            read_int32_ndr(wkb_ + pos_, n);
+        }
+        pos_ += 4;
+
+        return n;
+    }
     int read_integer()
     {
         boost::int32_t n;
@@ -211,8 +227,8 @@ private:
         {
             for (unsigned i = 0; i < ar.size(); ++i)
             {
-                read_double_ndr(wkb_ + pos_, ar[i].x);
-                read_double_ndr(wkb_ + pos_ + WKB_HACK_DOUBLE_SIZE, ar[i].y);
+                read_float_double_ndr(wkb_ + pos_, ar[i].x);
+                read_float_double_ndr(wkb_ + pos_ + WKB_HACK_DOUBLE_SIZE, ar[i].y);
                 pos_ += 2*WKB_HACK_DOUBLE_SIZE; // skip XY
             }
         }
@@ -220,8 +236,8 @@ private:
         {
             for (unsigned i=0;i<ar.size();++i)
             {
-                read_double_xdr(wkb_ + pos_, ar[i].x);
-                read_double_xdr(wkb_ + pos_ + WKB_HACK_DOUBLE_SIZE, ar[i].y);
+                read_float_double_xdr(wkb_ + pos_, ar[i].x);
+                read_float_double_xdr(wkb_ + pos_ + WKB_HACK_DOUBLE_SIZE, ar[i].y);
                 pos_ += 2*WKB_HACK_DOUBLE_SIZE; // skip XY
             }
         }
