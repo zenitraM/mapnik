@@ -222,7 +222,7 @@ private:
             {
                 read_double_xdr(wkb_ + pos_, ar[i].x);
                 read_double_xdr(wkb_ + pos_ + WKB_HACK_DOUBLE_SIZE, ar[i].y);
-                pos_ += WKB_HACK_DOUBLE_SIZE; // skip XY
+                pos_ += 2*WKB_HACK_DOUBLE_SIZE; // skip XY
             }
         }
     }
