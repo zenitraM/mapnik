@@ -1,0 +1,26 @@
+<!DOCTYPE Map>
+<!-- Sample Mapnik XML template by Dane Springmeyer -->
+<Map srs="+proj=latlong +datum=WGS84" background-color="white" minimum-version="0.7.2">
+
+  <Style name="population">
+     <Rule>
+      <PolygonSymbolizer fill="darkred"/>
+      <LineSymbolizer stroke="black" stroke-width=".7"/>
+     </Rule>
+   </Style>
+
+    <Layer name="countries" status="on" srs="+proj=latlong +datum=WGS84">
+        <StyleName>population</StyleName>
+        <Datasource>
+          <Parameter name="type">postgis</Parameter>
+          <Parameter name="host">localhost</Parameter>
+          <Parameter name="dbname">ptest</Parameter>
+          <Parameter name="user">postgres</Parameter>      
+          <Parameter name="password"></Parameter>
+          <Parameter name="table">(select the_geom from tm_world_borders_simpl_0_3) as world</Parameter>
+          <Parameter name="estimate_extent">false</Parameter>
+          <Parameter name="extent">-180,-90,180,89.99</Parameter>
+        </Datasource>
+    </Layer>
+
+</Map>
