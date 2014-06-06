@@ -32,7 +32,7 @@
 // boost
 #include <boost/format.hpp>
 #define WKB_HACK_OFFSET 0
-#define WKB_HACK_DOUBLE_SIZE 8
+#define WKB_HACK_DOUBLE_SIZE 4
 
 namespace mapnik
 {
@@ -105,7 +105,7 @@ public:
         case wkbGeneric:
         default:
             byteOrder_ = (wkbByteOrder) wkb_[0];
-            pos_ = 1;
+            //pos_ = 1;
             break;
         }
 
@@ -114,12 +114,16 @@ public:
 #else
         needSwap_ = byteOrder_ ? wkbNDR : wkbXDR;
 #endif
+        //needSwap_ =  !needSwap_;
+        pos_ = 0;
     }
 
     void read(boost::ptr_vector<geometry_type> & paths)
     {
         int type = *(wkb_ + pos_);
         pos_ += 1;
+
+        MAPNIK_LOG_DEBUG(read) << "read, type:" << type;
 
         switch (type)
         {
@@ -200,6 +204,7 @@ private:
         }
         pos_ += 4;
 
+        MAPNIK_LOG_DEBUG(read_integer) << "read_integer: " << n << " swap: " << needSwap_;
         return n;
     }
 
@@ -280,7 +285,7 @@ private:
         int num_points = read_integer();
         for (int i = 0; i < num_points; ++i)
         {
-            pos_ += 5;
+            pos_ += 1;
             read_point(paths);
         }
     }
@@ -327,7 +332,7 @@ private:
         int num_lines = read_integer();
         for (int i = 0; i < num_lines; ++i)
         {
-            pos_ += 5;
+            pos_ += 1;
             read_linestring(paths);
         }
     }
@@ -362,13 +367,16 @@ private:
 
     void read_polygon(boost::ptr_vector<geometry_type> & paths)
     {
+        MAPNIK_LOG_DEBUG(read_polygon) << "POLYGON";
         int num_rings = read_integer();
+        MAPNIK_LOG_DEBUG(read_polygon) << "num_rings: " << num_rings;
         if (num_rings > 0)
         {
             std::auto_ptr<geometry_type> poly(new geometry_type(Polygon));
             for (int i = 0; i < num_rings; ++i)
             {
                 int num_points = read_integer();
+                MAPNIK_LOG_DEBUG(read_polygon) << "num points: " << num_points;
                 if (num_points > 0)
                 {
                     CoordinateArray ar(num_points);
@@ -386,12 +394,16 @@ private:
         }
     }
 
+    //06-02-00000003010000000400000026bf76c20e328841848c77c29ad78841842d77c2804e894126bf76c20e328841030100000004000000acea76c26ede8c41886977c218aa8c41047e77c290a18d41acea76c26ede8c41
+
     void read_multipolygon(boost::ptr_vector<geometry_type> & paths)
     {
         int num_polys = read_integer();
+        MAPNIK_LOG_DEBUG(read_multipolygon) << "MULTIPOLY: " << num_polys;
         for (int i = 0; i < num_polys; ++i)
         {
-            pos_ += 5;
+            //read(paths)
+            pos_ += 1;
             read_polygon(paths);
         }
     }
